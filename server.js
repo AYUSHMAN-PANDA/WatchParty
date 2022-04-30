@@ -120,6 +120,34 @@ io.on("connection", (socket) => {
       console.log("== Added user to firstUsers object");
     }
   });
+
+  // Get video-playing-server, video-paused-server, video-ended-server
+  socket.on("video-playing-server", ({ curTime }) => {
+    const user = getCurrentUser(socket.id);
+    io.to(user.room).emit("video-playing-client", {
+      curTime: curTime,
+    });
+  });
+
+  socket.on("video-paused-server", ({ curTime }) => {
+    const user = getCurrentUser(socket.id);
+    io.to(user.room).emit("video-paused-client", {
+      curTime: curTime,
+    });
+  });
+
+  // socket.on("video-ended-server", () => {
+  //   const user = getCurrentUser(socket.id);
+  //   io.to(user.room).emit("video-ended-client");
+  // });
+
+  // Get video-changed-server
+  socket.on("video-changed-server", ({ videoId }) => {
+    const user = getCurrentUser(socket.id);
+    io.to(user.room).emit("video-changed-client", {
+      videoId: videoId,
+    });
+  });
 });
 
 const PORT = process.env.PORT || 3000;

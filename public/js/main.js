@@ -10,7 +10,7 @@ let { username, room, customRoom } = Qs.parse(location.search, {
 });
 
 const socket = io();
-
+let firstTime = true;
 if (room === "SelectRoom") {
   room = customRoom;
 }
@@ -130,17 +130,36 @@ function onPlayerReady(event) {
   player.playVideo();
   // Send event to get video playing on other clients
   socket.emit("request-video-server");
+  // firstTime = true;
   console.log("Sent request to find playing videos");
 }
 
-function onPlayerStateChange(event) {}
+function onPlayerStateChange(event) {
+  curState = event.data;
+  curTime = player.getCurrentTime();
+  if (firstTime) return;
+  if (curState === YT.PlayerState.PLAYING) {
+    curTime = player.getCurrentTime();
+    socket.emit("video-playing-server", { curTime });
+  }
+  if (curState === YT.PlayerState.PAUSED) {
+    socket.emit("video-paused-server", { curTime });
+  }
+  // if (curState === YT.PlayerState.ENDED) {
+  //   socket.emit("video-ended-server", { curTime });
+  // }
+}
 
 function changeVideo() {
   let search = document.getElementById("youtube-link");
   player.loadVideoById(search.value.split("watch?v=")[1]);
+
+  // TODO: Emit event
+  socket.emit("video-changed-server", {
+    videoId: search.value.split("watch?v=")[1],
+  });
 }
 
-// TODO: Emit event
 socket.on("request-video-client", () => {
   console.log("Received request to for video details");
   let curId = player.getVideoData()["video_id"];
@@ -157,20 +176,50 @@ socket.on(
     console.log("ID: ", videoId);
     if (!videoId) {
       console.log("No change, because I am the first client");
+      firstTime = false;
       return;
     } else {
       console.log("I am not the first client");
       player.loadVideoById(videoId);
-      // Sleep for 2 seconds
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Sleep for 1 second
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       if (isPlaying == 1) {
         player.playVideo();
       } else {
         player.pauseVideo();
       }
-      player.seekTo(curTime + 2);
+      player.seekTo(curTime + 1);
     }
+    firstTime = false;
   }
 );
+
+// Catch all the events
+socket.on("video-playing-client", ({ curTime }) => {
+  console.log("Received video playing event");
+  if (Math.abs(curTime - player.getCurrentTime()) > 3) {
+    player.seekTo(curTime);
+  }
+  if (curState !== YT.PlayerState.PLAYING) {
+    player.playVideo();
+  }
+});
+
+socket.on("video-paused-client", ({ curTime }) => {
+  console.log("Received video paused event");
+  if (Math.abs(curTime - player.getCurrentTime()) > 3) {
+    player.seekTo(curTime);
+  }
+  if (curState !== YT.PlayerState.PAUSED) {
+    player.pauseVideo();
+  }
+});
+
+socket.on("video-changed-client", ({ videoId }) => {
+  console.log("Received video change event");
+  if (player.getVideoData()["video_id"] !== videoId) {
+    player.loadVideoById(videoId);
+  }
+});
 
 // Handle all socket events
