@@ -25,14 +25,14 @@ The `socket.io` framework is used for broadcasting and receiving events and mess
 
 - This event is invoked when a new client joins the server.
 - When a client joins the server, we capture the username and room name of the client.
-- The client is added to the requested toom using socket.join()
+- The client is added to the requested room using `socket.join()`
 - Existing users in the requested room are notified of the event that a new user, named `username` has joined their room.
 - The requested room's metadata containing the id's of the participants is updated with the new user's id.
 
 ### Chat Message Event
 
-- This Event is emitted when a new message is sent by a client.
-- The message is broadcasted to other users in the same room.
+- This Event is emitted when a new message is sent by a client using `socket.emit()`
+- The message is broadcasted to other users in the same room using socket.`broadcast.emit()`
 
 ### Disconnect Event
 
@@ -42,13 +42,13 @@ The `socket.io` framework is used for broadcasting and receiving events and mess
 
 ### Video-state-first-server Event
 
-### request-video-server
+### Request-video-server
 
-### video-playing-server
+### Video-playing-server
 
-### video-paused-server
+### Video-paused-server
 
-### video-changed-server
+### Video-changed-server
 
 ## Plans Ahead
 
