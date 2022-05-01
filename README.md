@@ -20,6 +20,9 @@
 ## Events Handling Implementaion
 
 The `socket.io` framework is used for broadcasting and receiving events and messages in the server.
+Other than the default events, we differentiate our events as follows:  
+`{custom-event}-server` : For events emitted by server.  
+`{custom-event}-client` : For events emitted by client.
 
 ### Connection Event
 
@@ -42,13 +45,29 @@ The `socket.io` framework is used for broadcasting and receiving events and mess
 
 ### Video-state-first-server Event
 
+- This Event is emitted for sending current video state to server.
+- This happens when server requests for vide state from a particular client.
+- This data is used to get new joinee in sync with everyone in room.
+
 ### Request-video-server
+
+- This Event is emitted by server, requesting one of the existing user in room for current video state.
+- This happens when a new user joins a room
 
 ### Video-playing-server
 
+- This event is broadcasted by a server to the room when one of the user in room starts playing the video.
+- Every client catches this event and starts playing and syncs to current time.
+
 ### Video-paused-server
 
+- This event is broadcasted by a server to the room when one of the user in room pauses the video.
+- Every client catches this event and pauses playing and syncs to current time.
+
 ### Video-changed-server
+
+- This event is broadcasted by a server to the room when one of the user in room changes the video.
+- Every client catches this event and loads the new video.
 
 ## Plans Ahead
 
@@ -57,3 +76,5 @@ The `socket.io` framework is used for broadcasting and receiving events and mess
 - Authentication for Private chat rooms : Generate keys to share with friends for custom Private rooms
 - Private message/tag a user in the group
 - Voting for streaming a new video
+- Voice Chatting
+- User targetted messaging
