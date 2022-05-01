@@ -134,16 +134,24 @@ function onPlayerReady(event) {
   console.log("Sent request to find playing videos");
 }
 
+let PAUSE_EVT_STACK = 0;
 function onPlayerStateChange(event) {
   curState = event.data;
   curTime = player.getCurrentTime();
   if (firstTime) return;
+  if (event.data == YT.PlayerState.PAUSED) PAUSE_EVT_STACK++;
+  if (event.data == YT.PlayerState.BUFFERING) PAUSE_EVT_STACK++;
+  if (event.data == YT.PlayerState.PLAYING) PAUSE_EVT_STACK = 0;
   if (curState === YT.PlayerState.PLAYING) {
+    console.log("State changed: " + event.data);
     curTime = player.getCurrentTime();
     socket.emit("video-playing-server", { curTime });
+    doNotEmit = true;
   }
-  if (curState === YT.PlayerState.PAUSED) {
+  if (curState === YT.PlayerState.PAUSED && PAUSE_EVT_STACK <= 1) {
+    console.log("State changed: " + event.data);
     socket.emit("video-paused-server", { curTime });
+    doNotEmit = true;
   }
   // if (curState === YT.PlayerState.ENDED) {
   //   socket.emit("video-ended-server", { curTime });
@@ -196,6 +204,10 @@ socket.on(
 
 // Catch all the events
 socket.on("video-playing-client", ({ curTime }) => {
+  if (doNotEmit) {
+    doNotEmit = false;
+    return;
+  }
   console.log("Received video playing event");
   if (Math.abs(curTime - player.getCurrentTime()) > 3) {
     player.seekTo(curTime);
@@ -206,6 +218,10 @@ socket.on("video-playing-client", ({ curTime }) => {
 });
 
 socket.on("video-paused-client", ({ curTime }) => {
+  if (doNotEmit) {
+    doNotEmit = false;
+    return;
+  }
   console.log("Received video paused event");
   if (Math.abs(curTime - player.getCurrentTime()) > 3) {
     player.seekTo(curTime);
@@ -216,6 +232,10 @@ socket.on("video-paused-client", ({ curTime }) => {
 });
 
 socket.on("video-changed-client", ({ videoId }) => {
+  if (doNotEmit) {
+    doNotEmit = false;
+    return;
+  }
   console.log("Received video change event");
   if (player.getVideoData()["video_id"] !== videoId) {
     player.loadVideoById(videoId);
