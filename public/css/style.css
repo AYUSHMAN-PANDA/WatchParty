@@ -256,8 +256,50 @@ a {
   height: 100%;
 }
 
-#youtube-link {
+/* #youtube-link {
   max-width: 100%;
   width: 80%;
   height: 25px;
+} */
+
+.search-container {
+  display: flex;
+  background-color: var(--dark-color-a);
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.search-container .search-logo {
+  background-color: white;
+  padding: 9px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: red;
+  box-sizing: border-box;
+}
+
+.search-container .search-logo > * {
+  font-size: 1.5rem;
+}
+
+.search-container .search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background-color: white;
+  padding: 10px;
+  text-align: center;
+  /* font-size: 1.1rem; */
+}
+
+.search-container .search-btn {
+  padding: 0 40px;
+  border: none;
+  outline: none;
+  color: var(--dark-color-a);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background: var(--light-color);
 }

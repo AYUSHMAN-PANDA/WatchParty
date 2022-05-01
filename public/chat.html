@@ -15,25 +15,25 @@
   <body>
     <div class="d-flex flex-column chat-container">
       <!-- Add a input text field and a button -->
-      <div style="display: flex">
+      <div class="search-container">
         <!-- Add label for inout -->
         <!-- <label for="message-input" class="mr-2">Youtube URL: </label> -->
         <!-- Add youtube logo in label -->
-        <label for="message-input">
+        <!-- <label for="message-input">
           <i class="fab fa-youtube"></i>
-        </label>
+        </label> -->
+        <div class="search-logo">
+          <i class="fab fa-youtube"></i>
+        </div>
         <input
           id="youtube-link"
           type="text"
-          class="form-control"
+          class="search-input"
           id="message"
           placeholder="Enter URL of youtube video"
         />
-        <button
-          class="btn btn-primary"
-          id="load-button"
-          onclick="changeVideo()"
-        >
+        <button class="search-btn" id="load-button" onclick="changeVideo()">
+          <!-- <i class="fab fa-search"></i> -->
           Load
         </button>
       </div>
