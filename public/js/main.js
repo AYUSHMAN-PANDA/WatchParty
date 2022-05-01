@@ -108,7 +108,7 @@ var player;
 let curState = "";
 let curTime = 0;
 function onYouTubeIframeAPIReady() {
-  const videoId = "dQw4w9WgXcQ";
+  const videoId = "szg3dIZ8xDc";
   player = new YT.Player("player", {
     height: "720",
     width: "640",
